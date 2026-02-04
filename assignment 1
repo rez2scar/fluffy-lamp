@@ -1,0 +1,187 @@
+
+#ifndef BOOK_H
+#define BOOK_H
+
+#include <string>
+using namespace std;
+
+class Book {
+private:
+    int id;
+    string title;
+    string author;
+    bool borrowed;
+
+public:
+    Book();
+    Book(int i, string t, string a);
+
+    int getId();
+    string getTitle();
+    bool isBorrowed();
+
+    void borrow();
+    void giveBack();
+};
+
+#endif
+Book.cpp
+#include "Book.h"
+
+Book::Book() {
+    id = 0;
+    borrowed = false;
+}
+
+Book::Book(int i, string t, string a) {
+    id = i;
+    title = t;
+    author = a;
+    borrowed = false;
+}
+
+int Book::getId() {
+    return id;
+}
+
+string Book::getTitle() {
+    return title;
+}
+
+bool Book::isBorrowed() {
+    return borrowed;
+}
+
+void Book::borrow() {
+    borrowed = true;
+}
+
+void Book::giveBack() {
+    borrowed = false;
+}
+
+User.h
+#ifndef USER_H
+#define USER_H
+
+#include <string>
+using namespace std;
+
+class User {
+private:
+    int id;
+    string name;
+
+public:
+    User();
+    User(int i, string n);
+
+    int getId();
+    string getName();
+};
+
+#endif
+User.cpp
+#include "User.h"
+
+User::User() {
+    id = 0;
+}
+
+User::User(int i, string n) {
+    id = i;
+    name = n;
+}
+
+int User::getId() {
+    return id;
+}
+
+string User::getName() {
+    return name;
+}
+
+Library.h
+#ifndef LIBRARY_H
+#define LIBRARY_H
+
+#include "Book.h"
+#include "User.h"
+
+class Library {
+private:
+    Book books[10];
+    User users[5];
+    int bookCount;
+    int userCount;
+
+public:
+    Library();
+
+    void addBook(Book b);
+    void addUser(User u);
+
+    void borrowBook(int userId, int bookId);
+    void returnBook(int bookId);
+};
+
+#endif
+Library.cpp
+#include "Library.h"
+#include <iostream>
+using namespace std;
+
+Library::Library() {
+    bookCount = 0;
+    userCount = 0;
+}
+
+void Library::addBook(Book b) {
+    books[bookCount] = b;
+    bookCount++;
+}
+
+void Library::addUser(User u) {
+    users[userCount] = u;
+    userCount++;
+}
+
+void Library::borrowBook(int userId, int bookId) {
+    for (int i = 0; i < bookCount; i++) {
+        if (books[i].getId() == bookId && !books[i].isBorrowed()) {
+            books[i].borrow();
+            cout << "Book borrowed successfully\n";
+            return;
+        }
+    }
+    cout << "Book not available\n";
+}
+
+void Library::returnBook(int bookId) {
+    for (int i = 0; i < bookCount; i++) {
+        if (books[i].getId() == bookId) {
+            books[i].giveBack();
+            cout << "Book returned\n";
+            return;
+        }
+    }
+}
+
+main.cpp
+#include "Library.h"
+
+int main() {
+    Library lib;
+
+    Book b1(1, "C++ Basics", "John");
+    User u1(101, "Alice");
+
+    lib.addBook(b1);
+    lib.addUser(u1);
+
+    lib.borrowBook(101, 1);
+    lib.borrowBook(101, 1);   // should fail
+    lib.returnBook(1);
+
+    return 0;
+}
